@@ -1,73 +1,143 @@
-﻿using System;
+﻿﻿string[,] matriz = new string[3, 3];
+string players = "X";
+List<string> indexNumero = new List<string> {};
+int rounds = 1;
+int index = 1;
 
-namespace JogoDaVelha
+for (int i = 0; i < matriz.GetLength(0); i++)
 {
-    class Program
+    for (int j = 0; j < matriz.GetLength(1); j++)
     {
-        static void Main(string[] args)
+        matriz[i, j] = index.ToString();
+        indexNumero.Add(index.ToString());
+        index++;
+    }
+}
+
+while (rounds <= 9)
+{
+    Console.Clear();
+    Console.WriteLine("Jogo da Velha\n");
+
+    for (int i = 0; i < matriz.GetLength(0); i++)
+    {
+        Console.Write("   ");
+        for (int j = 0; j < matriz.GetLength(1); j++)
         {
-            string[,] tabuleiro = new string[3, 3];
-
-            tabuleiro[0, 0] = "X";
-            tabuleiro[0, 1] = "X";
-            tabuleiro[0, 2] = "X";
-
-            tabuleiro[1, 0] = "O";
-            tabuleiro[1, 1] = "X";
-            tabuleiro[1, 2] = "O";
-
-            tabuleiro[2, 0] = "O";
-            tabuleiro[2, 1] = "O";
-            tabuleiro[2, 2] = "X";
-
-            ImprimirTabuleiro(tabuleiro);
-
-            string vencedor = VerificarVencedor(tabuleiro);
-            if (vencedor != null)
-            {
-                Console.WriteLine($"O jogador '{vencedor}' venceu!");
-            }
+            string val = matriz[i, j];
+            if (val == "X")
+                Console.ForegroundColor = ConsoleColor.Red;
+            else if (val == "O")
+                Console.ForegroundColor = ConsoleColor.Blue;
             else
-            {
-                Console.WriteLine("Nenhum vencedor.");
-            }
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+            Console.Write($" {val} ");
+            Console.ResetColor();
+
+            if (j < 2) Console.Write("|");
         }
+        Console.WriteLine();
+        if (i < 2)
+            Console.WriteLine("-----+--+------");
+    }
 
-        static void ImprimirTabuleiro(string[,] tab)
+    Console.WriteLine($"\nRodada {rounds} - Jogador: {players}");
+    Console.Write("Escolha uma posição (1-9): ");
+    string jogada = Console.ReadLine();
+
+    while (!indexNumero.Contains(jogada))
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write("Jogada inválida! Tente novamente: ");
+        Console.ResetColor();
+        jogada = Console.ReadLine();
+    }
+
+    for (int i = 0; i < matriz.GetLength(0); i++)
+    {
+        for (int j = 0; j < matriz.GetLength(1); j++)
         {
-            Console.WriteLine();
-            for (int i = 0; i < 3; i++)
+            if (jogada == matriz[i, j] && indexNumero.Contains(jogada))
             {
-                Console.Write("| ");
-                for (int j = 0; j < 3; j++)
-                {
-                    Console.Write(tab[i, j] + " | ");
-                }
-                Console.WriteLine();
+                matriz[i, j] = players;
+                indexNumero.Remove(jogada);
             }
-        }
-
-        static string VerificarVencedor(string[,] tab)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                if (tab[i, 0] != null && tab[i, 0] == tab[i, 1] && tab[i, 1] == tab[i, 2])
-                    return tab[i, 0];
-            }
-
-            for (int j = 0; j < 3; j++)
-            {
-                if (tab[0, j] != null && tab[0, j] == tab[1, j] && tab[1, j] == tab[2, j])
-                    return tab[0, j];
-            }
-
-            if (tab[0, 0] != null && tab[0, 0] == tab[1, 1] && tab[1, 1] == tab[2, 2])
-                return tab[0, 0];
-
-            if (tab[0, 2] != null && tab[0, 2] == tab[1, 1] && tab[1, 1] == tab[2, 0])
-                return tab[0, 2];
-
-            return null;
         }
     }
+
+    if ((matriz[0, 0] == matriz[1, 1] && matriz[1, 1] == matriz[2, 2]) ||
+        (matriz[0, 2] == matriz[1, 1] && matriz[1, 1] == matriz[2, 0]) ||
+
+        (matriz[0, 0] == matriz[0, 1] && matriz[0, 1] == matriz[0, 2]) ||
+        (matriz[1, 0] == matriz[1, 1] && matriz[1, 1] == matriz[1, 2]) ||
+        (matriz[2, 0] == matriz[2, 1] && matriz[2, 1] == matriz[2, 2]) ||
+
+        (matriz[0, 0] == matriz[1, 0] && matriz[1, 0] == matriz[2, 0]) ||
+        (matriz[0, 1] == matriz[1, 1] && matriz[1, 1] == matriz[2, 1]) ||
+        (matriz[0, 2] == matriz[1, 2] && matriz[1, 2] == matriz[2, 2]))
+    {
+        Console.Clear();
+        Console.WriteLine("Jogo da velha\n");
+
+        for (int i = 0; i < matriz.GetLength(0); i++)
+        {
+            Console.Write("   ");
+            for (int j = 0; j < matriz.GetLength(1); j++)
+            {
+                string val = matriz[i, j];
+                if (val == "X")
+                    Console.ForegroundColor = ConsoleColor.Red;
+                else if (val == "O")
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                else
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+                Console.Write($" {val} ");
+                Console.ResetColor();
+
+                if (j < 2) Console.Write("|");
+            }
+            Console.WriteLine();
+            if (i < 2)
+                Console.WriteLine(" -----+--+------");
+        }
+
+        Console.WriteLine($"\n Jogador {players} venceu!");
+        break;
+    }
+
+    players = (players == "X") ? "O" : "X";
+    rounds++;
+}
+
+if (rounds > 9)
+{
+    Console.Clear();
+    Console.WriteLine("Jogo da Velha\n");
+
+    for (int i = 0; i < matriz.GetLength(0); i++)
+    {
+        Console.Write("   ");
+        for (int j = 0; j < matriz.GetLength(1); j++)
+        {
+            string val = matriz[i, j];
+            if (val == "X")
+                Console.ForegroundColor = ConsoleColor.Red;
+            else if (val == "O")
+                Console.ForegroundColor = ConsoleColor.Blue;
+            else
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+            Console.Write($" {val} ");
+            Console.ResetColor();
+
+            if (j < 2) Console.Write("|");
+        }
+        Console.WriteLine();
+        if (i < 2)
+            Console.WriteLine("-----+--+------");
+    }
+
+    Console.WriteLine("Empate!");
 }
